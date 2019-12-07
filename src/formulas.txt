@@ -1,0 +1,77 @@
+
+    ----------------------------Definitions-----------------------------
+
+    Options are traded both on exchanges and in the over-the-counter market.
+    There are two types of option.
+
+    (BUY) A call option
+    gives the holder the right to buy the underlying asset
+    by a certain date for a certain price.
+
+    (SELL) A put option
+    gives the holder the right to sell the underlying asset
+    by a certain date for a certain price
+
+    EXPIRATION DATE or maturity
+
+    STRIKE PRICE or exercise price
+
+    EUROPEANS OPTIONS can only be exercise at maturity
+
+    AMERICAN OPTIONS can be exercise at any time up to maturity
+
+    IMPORTANT :
+    options give the holder the right to do something, he does not have to tho
+
+    The price of a call option decreases as the strike price increases,
+    while the price of a put option increases as the strike price increases
+
+    The price of both options increase as the maturity increases
+
+    FINANCIAL DERIVATIVE
+    a derivative is a contract that derives its value from an underlying asset
+
+    BINOMIAL TREE
+    It's a diagram representing different possible paths that might
+    be followed by the stock price over the life of an option
+
+
+
+
+
+
+
+    Put option
+
+    1. S0
+    2. K //Strike
+    3. r
+    4. t0
+    5. T
+    6. volatility
+
+
+    n
+
+
+    deltaT = (T - t0)/n
+    u = e^(r*sqrt(deltaT) )
+    d = 1/u
+    e^-(r*deltaT)
+    p = e^(r*deltaT) - d / ( u - d )
+    q = 1 - p
+
+    intrinsic value
+    CALL max(st - K, O )
+    PUT max(K - St, O)
+
+    //The higher the perceive risk, the higher the premium demanded by the market.
+
+
+    //Call option, the buyer of the option has the option to exercise or nah
+
+
+    --Put option--
+        the buyer of the option has the right but not the OBLIGATION to sell,
+        however the the seller of the put has the obligation to buy at STRIKE price
+        if buyer exercises the option
