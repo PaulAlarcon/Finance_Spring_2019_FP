@@ -64,6 +64,7 @@
     intrinsic value
     CALL max(st - K, O )
     PUT max(K - St, O)
+    PAYOFF = SK - fairValue;
 
     //The higher the perceive risk, the higher the premium demanded by the market.
 

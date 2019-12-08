@@ -10,10 +10,12 @@ final class Node {
 
     boolean EEX;
     double fugit;
-    double fairValue;
+    double fairValue = 0;
+    int n;
 
-    public Node(double fairValue) {
+    public Node(double fairValue, int n) {
 //        this.fugit = fugit;
         this.fairValue = fairValue;
+        this.n = n;
     }
 }

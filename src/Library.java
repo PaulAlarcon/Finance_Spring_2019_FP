@@ -25,37 +25,58 @@ final class Library {
         float p = (dk - d)/(u-d);
         float q = 1 - p;
 
-        Node root = new Node(mkt.Price);
+        Node root = new Node(mkt.Price, 0);
 
-        ArrayList<ArrayList<Node>> tree = new ArrayList<>();
-        tree.add(new ArrayList<>(1));
-        tree.get(0).add(root);
+        Node tree[][] = new Node[n + 1][n + 1];
+        //set root at first array, first pos
+        tree[0][0] = root;
+        tree[1][0] = new Node(root.fairValue * d, 1  ); // sets
+        tree[1][1] = new Node(root.fairValue * u, 1 );
+        tree[2][1] = new Node(root.fairValue, 2);
 
-        int i;
-        //Array initialization
-        for(i = 1; i <=  n + 1; i++){
-            tree.add(new ArrayList<>(n));
-        }
-
-        for(i = 1; i <= n + 1; i++){
-            int firstIndex = 0;
-            int prevLastIndex  = n - 2;
-            int sizePrevStep = n - 1;
-
-            if( sizePrevStep == 1){
-                double tempVal =  tree.get(i - 1).get(firstIndex).fairValue;
-                tree.get(i).add(new Node(tempVal * u));
-                tree.get(i).add(new Node(tempVal * d));
+        int level = 2;
+        for(int i = 2; i < n + 1; i++){
+            tree[i][0] = new Node(tree[i - 1][0].fairValue * d, i); // down
+            tree[i][level] = new Node( tree[i - 1][level - 1].fairValue * u, i); // up
+            for(int j = 1; j < level; j++){
+                    tree[i][j] = new Node(tree[i - 2][j - 1].fairValue, i);
             }
-            else{
-                double prevU =  tree.get(i - 1).get(firstIndex).fairValue;
-                double prevD = tree.get(i - 1).get(prevLastIndex).fairValue;
-                tree.get(i).add(new Node(prevU * u));
-                tree.get(i).add(new Node(prevD * d));
-            }
+            level++;
 
         }
 
+        // Printing
+        for(int i = 0; i < tree.length; i++){
+            for(int j = 0; j < tree[i].length; j++){
+                if(tree[i][j] != null){
+                    System.out.print( tree[i][j].fairValue + " ");
+                }
+                else {
+                    System.out.print(" ( ) ");
+                }
+            }
+            System.out.println();
+        }
+
+//        for(i = 1; i <= n + 1; i++){
+//            int firstIndex = 0;
+//            int prevLastIndex  = n - 2;
+//            int sizePrevStep = n - 1;
+//
+//            if( sizePrevStep == 1){
+//                double tempVal =  tree.get(i - 1).get(firstIndex).fairValue;
+//                tree.get(i).add(new Node(tempVal * u));
+//                tree.get(i).add(new Node(tempVal * d));
+//            }
+//            else{
+//                double prevU =  tree.get(i - 1).get(firstIndex).fairValue;
+//                double prevD = tree.get(i - 1).get(prevLastIndex).fairValue;
+//                tree.get(i).add(new Node(prevU * u));
+//                tree.get(i).add(new Node(prevD * d));
+//            }
+//
+//        }
+//
 //        for(i = 0; i < tree.size(); i++) {
 //            System.out.print(tree.get(i).fairValue + " ");
 //        }
@@ -84,22 +105,3 @@ final class Library {
     };
 
 }
-
-
-/*
-ROOT
-    Left Child
-        Left Child
-            Left Child
-            Right Child
-        Right Child
-            Left Child
-            Right Child
-    Right Child
-        Left Child
-            Left Child
-            Right Child
-        Right Child
-            Left Child
-            Right Child
- */
