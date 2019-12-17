@@ -1,5 +1,4 @@
-import static java.lang.Math.exp;
-import static java.lang.Math.sqrt;
+import static java.lang.Math.*;
 
 final class Library {
 
@@ -13,22 +12,22 @@ final class Library {
         double deltaT = (deriv.T - mkt.t0) / n;
         double u = (exp(mkt.sigma * sqrt(deltaT)));
         double d = 1 / u;
-        double dk =  exp(mkt.r * deltaT);
-        double InvDk =  1 / dk;
-        double p = (dk  - d) / (u - d);
+        double dk = exp(mkt.r * deltaT);
+        double InvDk = 1 / dk;
+        double p = (dk - d) / (u - d);
         double q = 1 - p;
         double fugitAtN = deriv.T - mkt.t0;
-        deriv.calculateParemeters( deltaT, u, d, dk, InvDk, p, q, fugitAtN);
+        deriv.calculateParemeters(deltaT, u, d, dk, InvDk, p, q, fugitAtN);
 
         Node tree[][] = new Node[n + 1][n + 1];
-        Node root = new Node( mkt.S,0);
+        Node root = new Node(mkt.S, 0);
         tree[0][0] = root;
 
         for (int i = 1; i < n + 1; i++) {
 
-            if(i == 1){
+            if (i == 1) {
                 tree[i][0] = new Node(tree[0][0].stockPrice * d, 1); // sets
-                tree[i][i] = new Node(tree[0][0].stockPrice * u,1);
+                tree[i][i] = new Node(tree[0][0].stockPrice * u, 1);
             }
 
             tree[i][0] = new Node(tree[i - 1][0].stockPrice * d, i); // down
@@ -39,18 +38,17 @@ final class Library {
             }
         }
 
-        for(int i = 0; i < tree.length - 1; i++){
-            for(int j = 0; j < i + 1; j++){
-                tree[i][j].setChildren(tree[i + 1 ][j], tree[i + 1][j + 1]);
+        for (int i = 0; i < tree.length - 1; i++) {
+            for (int j = 0; j < i + 1; j++) {
+                tree[i][j].setChildren(tree[i + 1][j], tree[i + 1][j + 1]);
             }
         }
 
-        for(int j = tree.length - 1; j >= 0; j--){
-            for(int i = 0; i <= j; i++){
-                if(j == tree.length - 1){
+        for (int j = tree.length - 1; j >= 0; j--) {
+            for (int i = 0; i <= j; i++) {
+                if (j == tree.length - 1) {
                     deriv.terminalCondition(tree[j][i]);
-                }
-                else{
+                } else {
                     deriv.valuationTest(tree[j][i]);
                 }
             }
@@ -62,16 +60,75 @@ final class Library {
 
     }
 
-    int impvol(final Derivative deriv, final MarketData mkt, int n, int max_iter, double tol, Output out) {
-        // The function impvol executes a loop of iterations to calculate the implied volatility of a derivative.
-//        The market price of the derivative is supplied in theMarketDataobject.
-//        To calculate the implied volatility, the functionimpvolcallsbinomin a loop.
-//        The number of loop iterations and the implied volatility are returned in theOutputobject.
-        // The function must not change the input data, hence they are tagged asfinalobjects.
+//    int impvol(final Derivative deriv, final MarketData mkt, int n, int max_iter, double tol, Output out) {
+//
+//        double temptedVol = 0;
+//        int num_iter = 0;
+//        double FairValue = 0;
+//
+//        MarketData tempMkt = mkt;
+//
+//        for(int i = 0; i < max_iter; i++){
+//            FairValue = binom(deriv, tempMkt, n).FV;
+//            tempMkt.sigma = temptedVol + 0.01;
+//            System.out.println(FairValue);
+//            if(FairValue - tempMkt.Price <= tol){
+//                return 1;
+//            }
+//        }
+//        out.impvol = temptedVol;
+//        out.num_iter =  num_iter;
+//
+//
+//        return 0;
+//    }
 
+        int impvol(final Derivative deriv, final MarketData mkt, int n, int max_iter, double tol, Output out) {
+
+        if(mkt.Price < 0.99*(mkt.S - deriv.strikePrice*exp(-deriv.T*mkt.r))) {
+            out.impvol = 0.0;
+            out.num_iter = 0;
+            return 1;
+        }
+
+        final double accuracy = tol;
+        final double highValue = (exp(10));
+
+         double sigma_low = 0.01; //1 %
+         double sigma_high = 2.0; //200 %
+
+        MarketData tempMkt = mkt;
+
+        mkt.setSigma(sigma_high);
+        double price = binom(deriv, tempMkt, n).FV;
+
+        while(price < mkt.Price){
+            sigma_high = 2.0 * sigma_high;
+            mkt.setSigma(sigma_high);
+            price = binom(deriv,  tempMkt, n ).FV;
+            if(sigma_high > highValue) return 1;
+        };
+
+        for(int i = 0; i < max_iter; i++){
+            double sigma  = (sigma_low + sigma_high)*0.5;
+            tempMkt.setSigma(sigma);
+            price = binom(deriv, tempMkt, n).FV;
+
+            double test  = (price - mkt.Price);
+            if(abs(test) < accuracy){
+                out.impvol = sigma;
+                return 0;
+            }
+            if(test < 0.0) {
+                sigma_low = sigma;
+            }
+            else{
+                sigma_high = sigma;
+            }
+        }
 
         return 1;
-    }
+        }
 
     //ROTATE
     static void printTree(Node[][] tree) {

@@ -5,11 +5,18 @@ class MarketData {
         public double sigma;          // volatility
         public double t0;             // current time
 
-
         public MarketData( double s, double r, double sigma, double t0) {
                 S = s;
                 this.r = r;
                 this.sigma = sigma;
                 this.t0 = t0;
+        }
+
+        public void setSigma(double sigma) {
+                this.sigma = sigma;
+        }
+
+        public void setPrice(double price) {
+                Price = price;
         }
 }

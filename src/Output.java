@@ -6,6 +6,11 @@ final class Output {
     public boolean binom;
 
     //Output for binom
+
+
+    public Output() {
+    }
+
     public Output(double FV, double fugit) {
         binom = true;
         this.FV = Math.round(FV * 100.0)/100.0;
