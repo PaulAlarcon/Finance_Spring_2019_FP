@@ -117,6 +117,7 @@ final class Library {
             double test  = (price - mkt.Price);
             if(abs(test) < accuracy){
                 out.impvol = sigma;
+                out.num_iter = i;
                 return 0;
             }
             if(test < 0.0) {

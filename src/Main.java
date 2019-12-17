@@ -17,7 +17,7 @@ public class Main {
         System.out.println(l.binom(americanPut, mD, 4));
 
         mD.setPrice(10.446); // you need fairValue at root;
-        Output out = new Output(); 
+        Output out = new Output();
         l.impvol(americanPut, mD, 4, 100, 000000.1, out );
         System.out.println(out.impvol);
 
