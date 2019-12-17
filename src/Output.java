@@ -5,9 +5,6 @@ final class Output {
     public int num_iter;   // number of iterations to compute implied volatility
     public boolean binom;
 
-    //Output for binom
-
-
     public Output() {
     }
 

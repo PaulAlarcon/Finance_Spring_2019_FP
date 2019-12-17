@@ -1,7 +1,7 @@
 abstract class Derivative {
 
     public double T;
-    public double strikePrice;
+    public double Strike;
 
     public double deltaT;
     public double u;

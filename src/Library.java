@@ -60,32 +60,9 @@ final class Library {
 
     }
 
-//    int impvol(final Derivative deriv, final MarketData mkt, int n, int max_iter, double tol, Output out) {
-//
-//        double temptedVol = 0;
-//        int num_iter = 0;
-//        double FairValue = 0;
-//
-//        MarketData tempMkt = mkt;
-//
-//        for(int i = 0; i < max_iter; i++){
-//            FairValue = binom(deriv, tempMkt, n).FV;
-//            tempMkt.sigma = temptedVol + 0.01;
-//            System.out.println(FairValue);
-//            if(FairValue - tempMkt.Price <= tol){
-//                return 1;
-//            }
-//        }
-//        out.impvol = temptedVol;
-//        out.num_iter =  num_iter;
-//
-//
-//        return 0;
-//    }
+    int impvol(final Derivative deriv, final MarketData mkt, int n, int max_iter, double tol, Output out) {
 
-        int impvol(final Derivative deriv, final MarketData mkt, int n, int max_iter, double tol, Output out) {
-
-        if(mkt.Price < 0.99*(mkt.S - deriv.strikePrice*exp(-deriv.T*mkt.r))) {
+        if(mkt.Price < 0.99*(mkt.S - deriv.Strike*exp(-deriv.T*mkt.r))) {
             out.impvol = 0.0;
             out.num_iter = 0;
             return 1;
@@ -129,9 +106,8 @@ final class Library {
         }
 
         return 1;
-        }
+    }
 
-    //ROTATE
     static void printTree(Node[][] tree) {
         for (int i = 0; i < tree.length; i++) {
             for (int j = 0; j < tree[i].length; j++) {

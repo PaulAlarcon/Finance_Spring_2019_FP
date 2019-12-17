@@ -8,20 +8,20 @@ class VanillaOption extends Derivative {
     public TYPE type;
     public VERSION version;
 
-    public VanillaOption(double T, double strPrice, TYPE type, VERSION version) {
+    public VanillaOption(double T, double Strike, TYPE type, VERSION version) {
         this.T = T;
         this.type = type;
         this.version = version;
-        this.strikePrice = strPrice;
+        this.Strike = Strike;
     }
 
     @Override
     public void terminalCondition(Node n) {
         if(type == TYPE.CALL){
-            n.fairValue = max( n.stockPrice - strikePrice , 0) ;
+            n.fairValue = max( n.stockPrice - Strike , 0) ;
         }
         else if(type == TYPE.PUT){
-            n.fairValue = max( strikePrice - n.stockPrice , 0) ;
+            n.fairValue = max( Strike - n.stockPrice , 0) ;
         }
         n.fugit = fugitAtN;
     }
@@ -33,10 +33,10 @@ class VanillaOption extends Derivative {
         }
         else if(version == VERSION.AMERICAN){
             if(type == TYPE.PUT){
-                n.intrinsicValue = max(strikePrice - n.stockPrice, 0);
+                n.intrinsicValue = max(Strike - n.stockPrice, 0);
             }
             else if(type == TYPE.CALL){
-                n.intrinsicValue = max(n.stockPrice - strikePrice, 0);
+                n.intrinsicValue = max(n.stockPrice - Strike, 0);
             }
             n.fairValue = invDk*(p*n.rChild.fairValue + q*n.lChild.fairValue);
 

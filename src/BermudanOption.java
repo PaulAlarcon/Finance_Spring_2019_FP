@@ -5,7 +5,9 @@ public class BermudanOption extends Derivative {
 
     static enum TYPE {PUT, CALL};
 
-    public BermudanOption(double T, double strPric, double window_begin, double window_end, TYPE type) {
+    public BermudanOption(double T, double Strike, double window_begin, double window_end, TYPE type) {
+        this.T = T;
+        this.Strike = Strike;
         this.window_begin = window_begin;
         this.window_end = window_end;
         this.type = type;
@@ -14,10 +16,10 @@ public class BermudanOption extends Derivative {
     @Override
     public void terminalCondition(Node n) {
         if(type == BermudanOption.TYPE.CALL){
-            n.fairValue = max( n.stockPrice - strikePrice , 0) ;
+            n.fairValue = max( n.stockPrice - Strike , 0) ;
         }
         else if(type == BermudanOption.TYPE.PUT){
-            n.fairValue = max( strikePrice - n.stockPrice , 0) ;
+            n.fairValue = max( Strike - n.stockPrice , 0) ;
         }
         n.fugit = fugitAtN;
     }
@@ -33,10 +35,10 @@ public class BermudanOption extends Derivative {
         }
         else if(open_window == true){
             if(type == BermudanOption.TYPE.PUT){
-                n.intrinsicValue = max(strikePrice - n.stockPrice, 0);
+                n.intrinsicValue = max(Strike - n.stockPrice, 0);
             }
             else if(type == BermudanOption.TYPE.CALL){
-                n.intrinsicValue = max(n.stockPrice - strikePrice, 0);
+                n.intrinsicValue = max(n.stockPrice - Strike, 0);
             }
             n.fairValue = invDk*(p*n.rChild.fairValue + q*n.lChild.fairValue);
 
