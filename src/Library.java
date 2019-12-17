@@ -1,9 +1,3 @@
-
-import java.lang.Math.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.TreeMap;
-
 import static java.lang.Math.exp;
 import static java.lang.Math.sqrt;
 
@@ -21,96 +15,52 @@ final class Library {
         double d = 1 / u;
         double dk =  exp(mkt.r * deltaT);
         double InvDk =  1 / dk;
-
-        double p = (dk - d) / (u - d);
+        double p = (dk  - d) / (u - d);
         double q = 1 - p;
-
-        Node root = new Node(mkt.Price, 0);
+        double fugitAtN = deriv.T - mkt.t0;
+        deriv.calculateParemeters( deltaT, u, d, dk, InvDk, p, q, fugitAtN);
 
         Node tree[][] = new Node[n + 1][n + 1];
-        //set root at first array, first pos
+        Node root = new Node( mkt.S,0);
         tree[0][0] = root;
-        tree[1][0] = new Node(root.fairValue * d, 1); // sets
-        tree[1][1] = new Node(root.fairValue * u, 1);
-        tree[2][1] = new Node(root.fairValue, 2);
 
+        for (int i = 1; i < n + 1; i++) {
 
-
-
-        //ArrayList instead of arr
-//        ArrayList<ArrayList<Node>> binom_tree = new ArrayList<ArrayList<Node>>();
-//        ArrayList<Integer>[] arr2 = new ArrayList[n + 1];
-
-//        binom_tree.get(0).add(root);
-//        binom_tree.get(1).add(new Node(root.fairValue*d, 1));
-//        binom_tree.get(1).add(new Node(root.fairValue*u, 1));
-//        binom_tree.get(2).add( 1, new Node(root.fairValue*u, 2) );
-
-
-//        int level = 2;
-//        for (int i = 2; i < n + 1; i++) {
-//            binom_tree.get(i).add(0, new Node(binom_tree.get(i-1).get(0).fairValue * d, i));
-//            binom_tree.get(i).add(level, new Node(binom_tree.get(i-1).get(level - 1).fairValue * d, i));
-//
-//            for (int j = 1; j < level; j++) {
-//                binom_tree.get(i).add(j, new Node( binom_tree.get(i -2 ).get(j - 1).fairValue, i));
-//            }
-//            level++;
-//        }
-//
-//        printBinomTree(binom_tree);
-
-
-        //Array Stuff
-        int level = 2;
-        for (int i = 2; i < n + 1; i++) {
-            tree[i][0] = new Node(tree[i - 1][0].fairValue * d, i); // down
-            tree[i][level] = new Node(tree[i - 1][level - 1].fairValue * u, i); // up
-            for (int j = 1; j < level; j++) {
-                tree[i][j] = new Node(tree[i - 2][j - 1].fairValue, i);
+            if(i == 1){
+                tree[i][0] = new Node(tree[0][0].stockPrice * d, 1); // sets
+                tree[i][i] = new Node(tree[0][0].stockPrice * u,1);
             }
-            level++;
+
+            tree[i][0] = new Node(tree[i - 1][0].stockPrice * d, i); // down
+            tree[i][i] = new Node(tree[i - 1][i - 1].stockPrice * u, i); // up
+
+            for (int j = 1; j < i; j++) {
+                tree[i][j] = new Node(tree[i - 2][j - 1].stockPrice, i);
+            }
         }
 
-        printTree(tree);
+        for(int i = 0; i < tree.length - 1; i++){
+            for(int j = 0; j < i + 1; j++){
+                tree[i][j].setChildren(tree[i + 1 ][j], tree[i + 1][j + 1]);
+            }
+        }
 
+        for(int j = tree.length - 1; j >= 0; j--){
+            for(int i = 0; i <= j; i++){
+                if(j == tree.length - 1){
+                    deriv.terminalCondition(tree[j][i]);
+                }
+                else{
+                    deriv.valuationTest(tree[j][i]);
+                }
+            }
+        }
 
+//        printTree(tree);
 
-//        for(i = 1; i <= n + 1; i++){
-//            int firstIndex = 0;
-//            int prevLastIndex  = n - 2;
-//            int sizePrevStep = n - 1;
-//
-//            if( sizePrevStep == 1){
-//                double tempVal =  tree.get(i - 1).get(firstIndex).fairValue;
-//                tree.get(i).add(new Node(tempVal * u));
-//                tree.get(i).add(new Node(tempVal * d));
-//            }
-//            else{
-//                double prevU =  tree.get(i - 1).get(firstIndex).fairValue;
-//                double prevD = tree.get(i - 1).get(prevLastIndex).fairValue;
-//                tree.get(i).add(new Node(prevU * u));
-//                tree.get(i).add(new Node(prevD * d));
-//            }
-//
-//        }
-//
-//        for(i = 0; i < tree.size(); i++) {
-//            System.out.print(tree.get(i).fairValue + " ");
-//        }
-
-//        System.out.println(deltaT);
-//        System.out.println(u);
-//        System.out.println(d);
-//        System.out.println(dk);
-//        System.out.println(InvDk);
-//        System.out.println(p);
-//        System.out.println(q);
-
-        return null;
+        return new Output(root.fairValue, root.fugit);
 
     }
-
 
     int impvol(final Derivative deriv, final MarketData mkt, int n, int max_iter, double tol, Output out) {
         // The function impvol executes a loop of iterations to calculate the implied volatility of a derivative.
@@ -123,33 +73,16 @@ final class Library {
         return 1;
     }
 
-    ;
-
-
+    //ROTATE
     static void printTree(Node[][] tree) {
-        // Printing
         for (int i = 0; i < tree.length; i++) {
             for (int j = 0; j < tree[i].length; j++) {
-                if (tree[i][j] != null) {
-                    System.out.print(tree[i][j].fairValue + " ");
-                } else {
-                    System.out.print(" ( ) ");
-                }
+                if (tree[i][j] != null)
+                    System.out.print(" |" + tree[i][j].fugit + " |");
             }
+
             System.out.println();
         }
     }
 
-    static void printBinomTree(ArrayList<ArrayList<Node>> tree) {
-        for (int i = 0; i < tree.size(); i++) {
-            for (int j = 0; j < tree.get(i).size(); j++) {
-//                if (tree[i][j] != null) {
-                    System.out.print(tree.get(i).get(j).fairValue + " ");
-//                } else {
-//                    System.out.print(" ( ) ");
-//                }
-            }
-            System.out.println();
-        }
-    }
 }

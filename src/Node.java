@@ -1,21 +1,20 @@
-import java.util.ArrayList;
-
 final class Node {
-
-//
-    Node single_came_from;
-    ArrayList<Node> came_from;
-
-//
-
     boolean EEX;
     double fugit;
-    double fairValue = 0;
+    double stockPrice;
     int n;
+    Node lChild;
+    Node rChild;
+    double intrinsicValue;
+    double fairValue;
 
-    public Node(double fairValue, int n) {
-//        this.fugit = fugit;
-        this.fairValue = fairValue;
+    public Node(double stockPrice, int n) {
+        this.stockPrice = stockPrice;
         this.n = n;
+    }
+
+    public void setChildren(Node left, Node right){
+        rChild = right;
+        lChild = left;
     }
 }

@@ -4,11 +4,10 @@ public class BermudanOption extends Derivative {
 
     @Override
     public void terminalCondition(Node n) {
-        super.terminalCondition(n);
     }
 
     @Override
     public void valuationTest(Node n) {
-        super.valuationTest(n);
     }
+
 }

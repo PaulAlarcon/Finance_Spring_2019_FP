@@ -76,3 +76,10 @@
         the buyer of the option has the right but not the OBLIGATION to sell,
         however the the seller of the put has the obligation to buy at STRIKE price
         if buyer exercises the option
+
+
+
+     CONCERNS
+
+     Allocating the children of every node
+     Where should we get the value of the strike price
