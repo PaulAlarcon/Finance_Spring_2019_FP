@@ -8,8 +8,8 @@ class VanillaOption extends Derivative {
     public TYPE type;
     public VERSION version;
 
-    public VanillaOption(double t, double strPrice, TYPE type, VERSION version) {
-        T = t;
+    public VanillaOption(double T, double strPrice, TYPE type, VERSION version) {
+        this.T = T;
         this.type = type;
         this.version = version;
         this.strikePrice = strPrice;

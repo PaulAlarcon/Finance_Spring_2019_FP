@@ -19,8 +19,12 @@ final class Output {
 
     //Output for impvol
     public Output(double impvol, int num_iter) {
-        this.impvol = impvol;
+        this.impvol =  Math.round(impvol * 100.0);
         this.num_iter = num_iter;
+    }
+
+    public void setImpVol(double impvol){
+        this.impvol =  impvol * 100.0;
     }
 
     public String toString(){

@@ -109,14 +109,14 @@ final class Library {
             if(sigma_high > highValue) return 1;
         };
 
-        for(int i = 0; i < max_iter; i++){
+        for(int i = 1; i <= max_iter; i++){
             double sigma  = (sigma_low + sigma_high)*0.5;
             tempMkt.setSigma(sigma);
             price = binom(deriv, tempMkt, n).FV;
 
             double test  = (price - mkt.Price);
             if(abs(test) < accuracy){
-                out.impvol = sigma;
+                out.setImpVol(sigma);
                 out.num_iter = i;
                 return 0;
             }
