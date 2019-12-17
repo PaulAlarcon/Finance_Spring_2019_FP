@@ -54,7 +54,7 @@ final class Library {
             }
         }
 
-//        printTree(tree);
+        printTree(tree);
 
         return new Output(root.fairValue, root.fugit);
 
@@ -136,7 +136,7 @@ final class Library {
         for (int i = 0; i < tree.length; i++) {
             for (int j = 0; j < tree[i].length; j++) {
                 if (tree[i][j] != null)
-                    System.out.print(" |" + tree[i][j].fugit + " |");
+                    System.out.print(" |" + tree[i][j].fugit + " " +  tree[i][j].fairValue +" |");
             }
 
             System.out.println();
