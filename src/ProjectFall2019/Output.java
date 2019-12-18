@@ -1,3 +1,5 @@
+package ProjectFall2019;
+
 final class Output {
     public double FV;      // fair value
     public double fugit;   // fugit

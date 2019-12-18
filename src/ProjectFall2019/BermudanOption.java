@@ -1,26 +1,28 @@
-import static java.lang.Math.exp;
+package ProjectFall2019;
+public class BermudanOption extends Derivative {
+    public double window_begin;
+    public double window_end;
+    TYPE type;
 
-class VanillaOption extends Derivative {
+    enum TYPE {PUT, CALL};
 
-    static enum TYPE {PUT, CALL};
-    static enum VERSION{AMERICAN, EUROPE};
-
-    public TYPE type;
-    public VERSION version;
-
-    public VanillaOption(double T, double Strike, TYPE type, VERSION version) {
+    public BermudanOption(double T, double Strike, double window_begin, double window_end, TYPE type) {
+        if(window_begin > window_end){
+            System.out.println("Wrong window data, the window begins after the it ends");
+        }
         this.T = T;
-        this.type = type;
-        this.version = version;
         this.Strike = Strike;
+        this.window_begin = window_begin;
+        this.window_end = window_end;
+        this.type = type;
     }
 
     @Override
     public void terminalCondition(Node n) {
-        if(type == TYPE.CALL){
+        if(type == BermudanOption.TYPE.CALL){
             n.fairValue = max( n.stockPrice - Strike , 0) ;
         }
-        else if(type == TYPE.PUT){
+        else if(type == BermudanOption.TYPE.PUT){
             n.fairValue = max( Strike - n.stockPrice , 0) ;
         }
         n.fugit = fugitAtN;
@@ -28,14 +30,19 @@ class VanillaOption extends Derivative {
 
     @Override
     public void valuationTest(Node n) {
-        if(version == VERSION.EUROPE){
+
+        double timeatNode = n.n * deltaT;
+        boolean open_window  = (timeatNode >= window_begin  && timeatNode <= window_end) ? true : false;
+
+        if(open_window == false){
             n.fairValue = invDk*(p*n.rChild.fairValue + q*n.lChild.fairValue);
+            n.fugit = fugitAtN;
         }
-        else if(version == VERSION.AMERICAN){
-            if(type == TYPE.PUT){
+        else if(open_window == true){
+            if(type == BermudanOption.TYPE.PUT){
                 n.intrinsicValue = max(Strike - n.stockPrice, 0);
             }
-            else if(type == TYPE.CALL){
+            else if(type == BermudanOption.TYPE.CALL){
                 n.intrinsicValue = max(n.stockPrice - Strike, 0);
             }
             n.fairValue = invDk*(p*n.rChild.fairValue + q*n.lChild.fairValue);
@@ -56,9 +63,6 @@ class VanillaOption extends Derivative {
             }
             n.fugit = tempFugit;
         }
-
-
     }
 
 }
-

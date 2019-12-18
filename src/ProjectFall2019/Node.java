@@ -1,3 +1,5 @@
+package ProjectFall2019;
+
 final class Node {
     boolean EEX;
     double fugit;

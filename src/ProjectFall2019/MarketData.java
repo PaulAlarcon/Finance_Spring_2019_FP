@@ -1,3 +1,4 @@
+package ProjectFall2019;
 class MarketData {
         public double Price;          // market price of security
         public double S;              // stock price
@@ -5,10 +6,10 @@ class MarketData {
         public double sigma;          // volatility
         public double t0;             // current time
 
-        public MarketData( double s, double r, double sigma, double t0) {
-                S = s;
+        public MarketData( double S, double r, double sigma, double t0) {
+                this.S = S;
                 this.r = r;
-                this.sigma = sigma;
+                this.sigma = sigma/100 ;
                 this.t0 = t0;
         }
 

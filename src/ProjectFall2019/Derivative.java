@@ -1,8 +1,8 @@
-abstract class Derivative {
+package ProjectFall2019;
 
+abstract class Derivative {
     public double T;
     public double Strike;
-
     public double deltaT;
     public double u;
     public double d;

@@ -1,24 +1,26 @@
-public class BermudanOption extends Derivative {
-    public double window_begin;
-    public double window_end;
-    TYPE type;
+package ProjectFall2019;
 
-    static enum TYPE {PUT, CALL};
+class VanillaOption extends Derivative {
 
-    public BermudanOption(double T, double Strike, double window_begin, double window_end, TYPE type) {
+    enum TYPE {PUT, CALL};
+    enum VERSION{AMERICAN, EUROPE};
+
+    public TYPE type;
+    public VERSION version;
+
+    public VanillaOption(double T, double Strike, TYPE type, VERSION version) {
         this.T = T;
-        this.Strike = Strike;
-        this.window_begin = window_begin;
-        this.window_end = window_end;
         this.type = type;
+        this.version = version;
+        this.Strike = Strike;
     }
 
     @Override
     public void terminalCondition(Node n) {
-        if(type == BermudanOption.TYPE.CALL){
+        if(type == TYPE.CALL){
             n.fairValue = max( n.stockPrice - Strike , 0) ;
         }
-        else if(type == BermudanOption.TYPE.PUT){
+        else if(type == TYPE.PUT){
             n.fairValue = max( Strike - n.stockPrice , 0) ;
         }
         n.fugit = fugitAtN;
@@ -26,18 +28,15 @@ public class BermudanOption extends Derivative {
 
     @Override
     public void valuationTest(Node n) {
-
-        double timeatNode = n.n * deltaT;
-        boolean open_window  = (window_begin < timeatNode && timeatNode < window_end) ? true : false;
-
-        if(open_window == false){
+        if(version == VERSION.EUROPE){
             n.fairValue = invDk*(p*n.rChild.fairValue + q*n.lChild.fairValue);
+            n.fugit = fugitAtN;
         }
-        else if(open_window == true){
-            if(type == BermudanOption.TYPE.PUT){
+        else if(version == VERSION.AMERICAN){
+            if(type == TYPE.PUT){
                 n.intrinsicValue = max(Strike - n.stockPrice, 0);
             }
-            else if(type == BermudanOption.TYPE.CALL){
+            else if(type == TYPE.CALL){
                 n.intrinsicValue = max(n.stockPrice - Strike, 0);
             }
             n.fairValue = invDk*(p*n.rChild.fairValue + q*n.lChild.fairValue);
@@ -61,3 +60,4 @@ public class BermudanOption extends Derivative {
     }
 
 }
+

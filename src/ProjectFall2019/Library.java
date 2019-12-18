@@ -1,3 +1,12 @@
+package ProjectFall2019;
+
+//Program designed to build a binomial tree and calculate the fair value and fugit of an option,
+// it also implements the bisection algorithm to find the implied volatility of a given option.
+
+//Colaborators :
+//              - Paul Alarcon
+//              - Mark Xia
+
 import static java.lang.Math.*;
 
 final class Library {
@@ -54,22 +63,25 @@ final class Library {
             }
         }
 
-        printTree(tree);
-
         return new Output(root.fairValue, root.fugit);
 
     }
 
     int impvol(final Derivative deriv, final MarketData mkt, int n, int max_iter, double tol, Output out) {
 
+        if(mkt.S < 0){
+            System.out.println("Wrong security price");
+            return 1;
+        }
+
         if(mkt.Price < 0.99*(mkt.S - deriv.Strike*exp(-deriv.T*mkt.r))) {
+            System.out.println(0.99*(mkt.S - deriv.Strike*exp(-deriv.T*mkt.r)));
             out.impvol = 0.0;
             out.num_iter = 0;
             return 1;
         }
 
-        final double accuracy = tol;
-        final double highValue = (exp(10));
+        final double highValue = exp(10);
 
          double sigma_low = 0.01; //1 %
          double sigma_high = 2.0; //200 %
@@ -92,7 +104,7 @@ final class Library {
             price = binom(deriv, tempMkt, n).FV;
 
             double test  = (price - mkt.Price);
-            if(abs(test) < accuracy){
+            if(abs(test) < tol){
                 out.setImpVol(sigma);
                 out.num_iter = i;
                 return 0;
@@ -106,17 +118,6 @@ final class Library {
         }
 
         return 1;
-    }
-
-    static void printTree(Node[][] tree) {
-        for (int i = 0; i < tree.length; i++) {
-            for (int j = 0; j < tree[i].length; j++) {
-                if (tree[i][j] != null)
-                    System.out.print(" |" + tree[i][j].fugit + " " +  tree[i][j].fairValue +" |");
-            }
-
-            System.out.println();
-        }
     }
 
 }
