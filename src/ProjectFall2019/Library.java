@@ -14,7 +14,7 @@ final class Library {
     Output binom(final Derivative deriv, final MarketData mkt, int n) {
 
         if (n < 1) {
-            System.out.println("Invalid number n");
+            System.out.println("Invalid number n.");
             return null;
         }
 
